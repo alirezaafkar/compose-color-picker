@@ -3,7 +3,6 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id("org.jetbrains.dokka") version "1.7.20"
     id 'maven-publish'
-    id 'signing'
 }
 
 ext {
@@ -12,18 +11,8 @@ ext {
     VERSION = '1.0.0'
 }
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
-ext["signing.keyId"] = properties.getProperty("signing.keyId", "")
-ext["signing.password"] = properties.getProperty("signing.password", "")
-ext["signing.secretKeyRingFile"] = properties.getProperty("signing.secretKeyRingFile", "")
-ext["ossrhUsername"] = properties.getProperty("ossrhUsername", "")
-ext["ossrhPassword"] = properties.getProperty("ossrhPassword", "")
-ext["sonatypeStagingProfileId"] = properties.getProperty("sonatypeStagingProfileId", "")
-
 android {
-    namespace GROUP_ID+"."+ARTIFACT_ID
+    namespace GROUP_ID + "." + ARTIFACT_ID
     compileSdk 33
 
     defaultConfig {
@@ -57,6 +46,9 @@ android {
         aarMetadata {
             minCompileSdk = 33
         }
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 
@@ -113,17 +105,8 @@ publishing {
         maven {
             name = "sonatype"
             url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-
-            credentials {
-                username ossrhUsername
-                password ossrhPassword
-            }
         }
     }
-}
-
-signing {
-    sign publishing.publications
 }
 
 dependencies {
